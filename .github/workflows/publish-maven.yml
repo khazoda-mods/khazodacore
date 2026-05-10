@@ -1,0 +1,57 @@
+name: Publish Maven
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 25
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Publish to staging Maven repo
+        run: ./gradlew :common:publish :fabric:publish :neoforge:publish --console plain
+
+      - name: Configure SSH
+        env:
+          MAVEN_HOST: ${{ secrets.KHAZODA_MAVEN_HOST }}
+          MAVEN_PORT: ${{ secrets.KHAZODA_MAVEN_PORT || '22' }}
+          MAVEN_SSH_KEY: ${{ secrets.KHAZODA_MAVEN_SSH_KEY }}
+        run: |
+          test -n "$MAVEN_HOST"
+          test -n "$MAVEN_SSH_KEY"
+          mkdir -p ~/.ssh
+          printf '%s\n' "$MAVEN_SSH_KEY" > ~/.ssh/khazoda_maven
+          chmod 600 ~/.ssh/khazoda_maven
+          ssh-keyscan -p "$MAVEN_PORT" "$MAVEN_HOST" >> ~/.ssh/known_hosts
+
+      - name: Sync artifacts to Khazoda Maven
+        env:
+          MAVEN_HOST: ${{ secrets.KHAZODA_MAVEN_HOST }}
+          MAVEN_PORT: ${{ secrets.KHAZODA_MAVEN_PORT || '22' }}
+          MAVEN_USER: ${{ secrets.KHAZODA_MAVEN_USER }}
+        run: |
+          test -n "$MAVEN_USER"
+          ssh -i ~/.ssh/khazoda_maven -p "$MAVEN_PORT" "$MAVEN_USER@$MAVEN_HOST" 'mkdir -p /srv/khazoda-maven/releases'
+          rsync -az --checksum --chmod=D755,F644 -e "ssh -i ~/.ssh/khazoda_maven -p $MAVEN_PORT" build/maven-repo/ "$MAVEN_USER@$MAVEN_HOST:/srv/khazoda-maven/releases/"
+
+      - name: Verify public Maven artifacts
+        run: |
+          version="$(sed -n 's/^version=//p' gradle.properties)"
+          for loader in common fabric neoforge; do
+            curl --fail --head "https://maven.khazoda.com/releases/com/khazoda/khazodacore-${loader}/${version}/khazodacore-${loader}-${version}.pom"
+          done
