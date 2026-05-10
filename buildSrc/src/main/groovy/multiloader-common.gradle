@@ -101,7 +101,8 @@ publishing {
     }
     repositories {
         maven {
-            url = System.getenv('local_maven_url')
+            name = 'KhazodaStaging'
+            url = rootProject.layout.buildDirectory.dir('maven-repo')
         }
     }
 }
