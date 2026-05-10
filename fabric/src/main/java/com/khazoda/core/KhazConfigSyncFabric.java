@@ -1,4 +1,4 @@
-package com.khazoda.baseline;
+package com.khazoda.core;
 
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;

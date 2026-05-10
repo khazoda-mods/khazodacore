@@ -1,4 +1,4 @@
-package com.khazoda.baseline;
+package com.khazoda.core;
 
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
@@ -29,7 +29,7 @@ import java.util.function.Supplier;
 
 
 /**
- * KhazReg is an opinionated multiloader registration helper for Khazoda's mods that fits a specific registration pattern.
+ * KhazReg is an opinionated multiloader registration helper built into KhazodaCore that fits a specific registration pattern.
  * It's not recommended to use this class yourself. Its structure may change over time and there may be breaking changes.
  */
 public final class KhazReg {
@@ -211,7 +211,7 @@ public final class KhazReg {
    * Called by mod loader entrypoints.
    */
 
-  // Call from Fabric's onInitialize() immediately after ExampleModCommon.init().
+  // Call from Fabric's onInitialize() immediately after the consuming mod common init method.
   public void registerAllStatic() {
     for (Registrar<?> registrar : registrars.values()) {
       registrar.registerBuiltin();

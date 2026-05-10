@@ -1,4 +1,4 @@
-package com.khazoda.baseline;
+package com.khazoda.core;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,7 +15,7 @@ import java.util.Objects;
 import java.util.Properties;
 
 /**
- * KhazConfig is a simple multiloader config helper class for Khazoda's mods.
+ * KhazConfig is a simple multiloader config helper built into KhazodaCore.
  * Config files are generated and read from {mod_id}.properties files in /config
  * It's not recommended to use this class yourself. Its structure may change over time and there may be breaking changes.
  */

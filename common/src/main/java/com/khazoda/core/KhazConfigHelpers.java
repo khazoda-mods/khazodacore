@@ -1,7 +1,7 @@
-package com.khazoda.baseline;
+package com.khazoda.core;
 
-import com.khazoda.baseline.KhazConfig.Entry;
-import com.khazoda.baseline.KhazConfig.ValueAdapter;
+import com.khazoda.core.KhazConfig.Entry;
+import com.khazoda.core.KhazConfig.ValueAdapter;
 
 import java.util.HashSet;
 import java.util.List;

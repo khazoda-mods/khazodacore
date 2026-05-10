@@ -1,4 +1,4 @@
-package com.khazoda.baseline;
+package com.khazoda.core;
 
 import net.neoforged.neoforge.client.event.ClientPlayerNetworkEvent;
 import net.neoforged.neoforge.common.NeoForge;
