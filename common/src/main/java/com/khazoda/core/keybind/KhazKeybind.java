@@ -3,6 +3,7 @@ package com.khazoda.core.keybind;
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Objects;
 import java.util.function.BooleanSupplier;
@@ -16,8 +17,8 @@ public final class KhazKeybind {
   private final Identifier id;
   private final Identifier category;
   private final InputConstants.Key defaultKey;
-  private final Runnable onPress;
-  private final Runnable onHold;
+  private final @Nullable Runnable onPress;
+  private final @Nullable Runnable onHold;
 
   // Loader helpers replace these once Minecraft owns the live KeyMapping.
   private BooleanSupplier boundInputHeld = () -> false;
@@ -75,11 +76,11 @@ public final class KhazKeybind {
     return defaultKey;
   }
 
-  Runnable onPress() {
+  @Nullable Runnable onPress() {
     return onPress;
   }
 
-  Runnable onHold() {
+  @Nullable Runnable onHold() {
     return onHold;
   }
 
@@ -107,8 +108,8 @@ public final class KhazKeybind {
     private final Identifier id;
     private Identifier category;
     private InputConstants.Key defaultKey = InputConstants.UNKNOWN;
-    private Runnable onPress;
-    private Runnable onHold;
+    private @Nullable Runnable onPress;
+    private @Nullable Runnable onHold;
 
     private Builder(Identifier id) {
       this.id = Objects.requireNonNull(id, "id");

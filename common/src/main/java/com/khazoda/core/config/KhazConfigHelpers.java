@@ -2,6 +2,7 @@ package com.khazoda.core.config;
 
 import com.khazoda.core.config.KhazConfig.Entry;
 import com.khazoda.core.config.KhazConfig.ValueAdapter;
+import org.jspecify.annotations.Nullable;
 
 import java.util.HashSet;
 import java.util.List;
@@ -117,7 +118,7 @@ final class KhazConfigHelpers {
     return Math.max(min, Math.min(max, value));
   }
 
-  static <T> T readValue(Entry<T> entry, String raw) {
+  static <T> T readValue(Entry<T> entry, @Nullable String raw) {
     if (raw == null) {
       return entry.defaultValue();
     }

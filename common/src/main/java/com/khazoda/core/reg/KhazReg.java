@@ -15,6 +15,7 @@ import net.minecraft.world.item.equipment.ArmorType;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockBehaviour;
+import org.jspecify.annotations.Nullable;
 
 import java.util.*;
 import java.util.function.Function;
@@ -45,7 +46,7 @@ public final class KhazReg {
 
   private static <T> Supplier<T> memoize(Supplier<T> supplier) {
     return new Supplier<>() {
-      private T value;
+      private @Nullable T value;
       private boolean resolved;
 
       @Override
@@ -54,7 +55,7 @@ public final class KhazReg {
           value = Objects.requireNonNull(supplier.get(), "Registry factories must not return null");
           resolved = true;
         }
-        return value;
+        return Objects.requireNonNull(value);
       }
     };
   }
