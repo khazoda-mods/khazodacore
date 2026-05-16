@@ -1,36 +1,25 @@
+<div class="markdown-row">
+
+![Static Badge](https://img.shields.io/badge/26.1-active_development-seagreen)
+
+</div>
+
+<span class="markdown-header">
+
+[![Explore All Mods Button](https://cdn.modrinth.com/data/cached_images/c6d32f79d6730fcfa7eb1c59b0c71783f3429990.png)](https://khazoda.com)[![Full Mod Description Button](https://cdn.modrinth.com/data/cached_images/7bdc40049d20ff26aa3f65f03d2e758a352d1bce.png)](https://www.khazoda.com/khazodacore)
+
+</span>
+
+### I don't recommend you use this as a library for your own mods. There will be breaking changes and not every feature or endpoint will be covered.
+
 # KhazodaCore
 
-KhazodaCore is a required multiloader library mod for Khazoda's Minecraft mods on 26.1.x and later.
+**This is a library mod**. It doesn't add any content by itself, but supports the development of my other mods.
 
-It provides shared utilities for:
+You only need to install KhazodaCore if you're using any of my other mods on Minecraft 26.1+.
 
-- multiloader static registration helpers
-- simple config .properties files
-- server-to-client config synchronization
 
-## Publishing
 
-KhazodaCore publishes Maven artifacts to a local staging repository first:
+# Frequently Asked Questions
 
-```powershell
-.\gradlew.bat :common:publish :fabric:publish :neoforge:publish --console plain
-```
-
-The staged Maven repository is written to:
-
-```text
-build/maven-repo
-```
-
-GitHub Actions can publish that staging repository to the public maven:
-
-```text
-https://maven.khazoda.com/releases
-```
-
-Required repository secrets:
-
-- `KHAZODA_MAVEN_HOST`
-- `KHAZODA_MAVEN_USER`
-- `KHAZODA_MAVEN_SSH_KEY`
-- `KHAZODA_MAVEN_PORT` optional, defaults to `22`
+So far there have been no questions. If you have any, [ask me on Discord](https://discord.com/invite/vEZUkSxwR9).
