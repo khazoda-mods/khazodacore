@@ -1,4 +1,4 @@
-package com.khazoda.core;
+package com.khazoda.core.reg;
 
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;

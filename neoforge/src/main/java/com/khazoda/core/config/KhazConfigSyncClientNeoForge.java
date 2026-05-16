@@ -1,10 +1,10 @@
-package com.khazoda.core;
+package com.khazoda.core.config;
 
 import net.neoforged.neoforge.client.event.ClientPlayerNetworkEvent;
 import net.neoforged.neoforge.common.NeoForge;
 
-final class NeoForgeKhazConfigSyncClient {
-  private NeoForgeKhazConfigSyncClient() {
+final class KhazConfigSyncClientNeoForge {
+  private KhazConfigSyncClientNeoForge() {
   }
 
   static void registerDisconnectReloadListener() {

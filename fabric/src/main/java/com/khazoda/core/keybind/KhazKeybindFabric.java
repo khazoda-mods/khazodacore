@@ -1,4 +1,4 @@
-package com.khazoda.core;
+package com.khazoda.core.keybind;
 
 import com.mojang.blaze3d.platform.InputConstants;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
@@ -79,7 +79,7 @@ public final class KhazKeybindFabric {
     try {
       return KeyMapping.Category.register(id);
     } catch (IllegalArgumentException ignored) {
-      // If Minecraft says category already exists, reuse that one instead of registering duplicate
+      // If category already exists, add to it instead of making a new one. (Category is a Record so this uses existing)
       return new KeyMapping.Category(id);
     }
   }

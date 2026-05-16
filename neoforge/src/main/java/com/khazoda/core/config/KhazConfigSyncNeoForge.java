@@ -1,4 +1,4 @@
-package com.khazoda.core;
+package com.khazoda.core.config;
 
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.bus.api.IEventBus;
@@ -45,7 +45,7 @@ public final class KhazConfigSyncNeoForge {
   private static void registerClientDisconnectReloadListener() {
     if (!clientGameListenersRegistered && FMLLoader.getCurrent().getDist().name().equals("CLIENT")) {
       clientGameListenersRegistered = true;
-      NeoForgeKhazConfigSyncClient.registerDisconnectReloadListener();
+      KhazConfigSyncClientNeoForge.registerDisconnectReloadListener();
     }
   }
 

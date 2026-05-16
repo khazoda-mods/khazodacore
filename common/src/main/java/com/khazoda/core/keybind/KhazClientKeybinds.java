@@ -1,13 +1,17 @@
-package com.khazoda.core;
+package com.khazoda.core.keybind;
 
 import net.minecraft.resources.Identifier;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 /**
  * Common registry for client-side keybind descriptors.
  * Keybind descriptors are held here in common, and then registered separately in
- * Fabric & NeoForge mostly automatically from KhazKeybindFabric and KhazKeybindNeoForge.
+ * Fabric and NeoForge mostly automatically from KhazKeybindFabric and KhazKeybindNeoForge.
  */
 public final class KhazClientKeybinds {
   private static final Map<Identifier, KhazKeybind> KEYBINDS = new LinkedHashMap<>();

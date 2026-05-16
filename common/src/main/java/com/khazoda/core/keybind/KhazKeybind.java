@@ -1,4 +1,4 @@
-package com.khazoda.core;
+package com.khazoda.core.keybind;
 
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.network.chat.Component;

@@ -1,4 +1,4 @@
-package com.khazoda.core;
+package com.khazoda.core.reg;
 
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;

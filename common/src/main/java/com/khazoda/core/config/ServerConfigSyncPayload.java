@@ -1,4 +1,4 @@
-package com.khazoda.core;
+package com.khazoda.core.config;
 
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;

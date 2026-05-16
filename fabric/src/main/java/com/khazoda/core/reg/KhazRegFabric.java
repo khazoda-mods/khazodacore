@@ -1,4 +1,4 @@
-package com.khazoda.core;
+package com.khazoda.core.reg;
 
 import java.util.function.Supplier;
 

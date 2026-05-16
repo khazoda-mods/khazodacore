@@ -1,4 +1,4 @@
-package com.khazoda.core;
+package com.khazoda.core.keybind;
 
 import java.util.function.BooleanSupplier;
 
