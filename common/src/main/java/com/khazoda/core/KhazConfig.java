@@ -8,16 +8,11 @@ import java.io.Reader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Properties;
+import java.util.*;
 
 /**
  * KhazConfig is a simple multiloader config helper built into KhazodaCore.
- * Config files are generated and read from {mod_id}.properties files in /config
- * It's not recommended to use this class yourself. Its structure may change over time and there may be breaking changes.
+ * Config files are generated and read from {mod_id}.properties files in /config.
  */
 public final class KhazConfig {
   private static final Logger LOG = LoggerFactory.getLogger(KhazConfig.class);
@@ -86,7 +81,6 @@ public final class KhazConfig {
       write();
     }
   }
-
 
   // Re-loads the config file into memory.
   public synchronized void reload() {
@@ -173,7 +167,9 @@ public final class KhazConfig {
       Objects.requireNonNull(adapter, "adapter");
     }
 
-    // Attach this to any config values that are client only. They won't be overridden by a server on connection.
+    /**
+     * Use this for client-only settings that should ignore server sync.
+     */
     public Entry<T> localOnly() {
       return new Entry<>(key, defaultValue, comment, adapter, false);
     }

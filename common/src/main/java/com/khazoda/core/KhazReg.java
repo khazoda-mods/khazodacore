@@ -9,14 +9,7 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.tags.TagKey;
-import net.minecraft.world.item.AxeItem;
-import net.minecraft.world.item.BlockItem;
-import net.minecraft.world.item.CreativeModeTab;
-import net.minecraft.world.item.HoeItem;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.ShovelItem;
-import net.minecraft.world.item.ToolMaterial;
+import net.minecraft.world.item.*;
 import net.minecraft.world.item.equipment.ArmorMaterial;
 import net.minecraft.world.item.equipment.ArmorType;
 import net.minecraft.world.level.ItemLike;
@@ -27,10 +20,9 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-
 /**
- * KhazReg is an opinionated multiloader registration helper built into KhazodaCore that fits a specific registration pattern.
- * It's not recommended to use this class yourself. Its structure may change over time and there may be breaking changes.
+ * KhazReg is an opinionated multiloader registration helper built into KhazodaCore.
+ * It's not recommended to use this class yourself as it may change and doesn't encompass everything.
  */
 public final class KhazReg {
   private final String modId;
@@ -51,13 +43,29 @@ public final class KhazReg {
     return (Registry<T>) registryHolder.value();
   }
 
+  private static <T> Supplier<T> memoize(Supplier<T> supplier) {
+    return new Supplier<>() {
+      private T value;
+      private boolean resolved;
+
+      @Override
+      public T get() {
+        if (!resolved) {
+          value = Objects.requireNonNull(supplier.get(), "Registry factories must not return null");
+          resolved = true;
+        }
+        return value;
+      }
+    };
+  }
+
   private Identifier ID(String path) {
     return Identifier.fromNamespaceAndPath(modId, path);
   }
 
   /**
    * ==========[ Common Registration Helpers ]==========
-   * Registration methods to call from MainRegistry
+   * Registration methods to call from MainRegistry.
    */
 
   /* Example: reg.register(Registries.ARMOR_MATERIAL, "bronze", () -> new ArmorMaterial(...)) */
@@ -219,7 +227,11 @@ public final class KhazReg {
     verifyAllStaticRegistrations();
   }
 
-  // Call from NeoForge main setup by wiring a RegisterEvent listener with eventBus.addListener(this::registerRegistries), then call MainRegistry.reg.registerNeoForge(event.getRegistry()) there.
+  /*
+   * Call from NeoForge main setup by wiring a RegisterEvent listener
+   * with eventBus.addListener(this::registerRegistries),
+   * then call MainRegistry.reg.registerNeoForge(event.getRegistry()) there.
+   * */
   public void registerNeoForge(Registry<?> registry) {
     Registrar<?> registrar = registrars.get(registry.key());
     if (registrar != null) {
@@ -227,7 +239,11 @@ public final class KhazReg {
     }
   }
 
-  // Call from NeoForge main setup by wiring an FMLCommonSetupEvent listener with eventBus.addListener(this::verifyRegistriesRegistered), then call MainRegistry.reg.verifyAllStaticRegistrations() there.
+  /*
+   * Call from NeoForge main setup by wiring an FMLCommonSetupEvent listener
+   * with eventBus.addListener(this::verifyRegistriesRegistered),
+   * then call MainRegistry.reg.verifyAllStaticRegistrations() there.
+   * */
   public void verifyAllStaticRegistrations() {
     Set<ResourceKey<? extends Registry<?>>> missing = new LinkedHashSet<>();
     for (Registrar<?> registrar : registrars.values()) {
@@ -242,7 +258,7 @@ public final class KhazReg {
 
   /**
    * ==========[ Registration Internals ]==========
-   * Shouldn't need to touch this
+   * Shouldn't need to touch this.
    */
 
   @SuppressWarnings("unchecked")
@@ -257,20 +273,9 @@ public final class KhazReg {
     return created;
   }
 
-  private static <T> Supplier<T> memoize(Supplier<T> supplier) {
-    return new Supplier<>() {
-      private T value;
-      private boolean resolved;
-
-      @Override
-      public T get() {
-        if (!resolved) {
-          value = Objects.requireNonNull(supplier.get(), "Registry factories must not return null");
-          resolved = true;
-        }
-        return value;
-      }
-    };
+  // Flag to mark registry as frozen.
+  public void freeze() {
+    frozen = true;
   }
 
   @FunctionalInterface
@@ -365,11 +370,6 @@ public final class KhazReg {
     public String toString() {
       return "BlockEntry[" + block.id() + "]";
     }
-  }
-
-  // Flag to mark registry as frozen
-  public void freeze() {
-    frozen = true;
   }
 
   private final class Registrar<T> {
