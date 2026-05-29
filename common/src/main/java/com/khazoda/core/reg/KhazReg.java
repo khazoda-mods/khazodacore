@@ -37,11 +37,8 @@ public final class KhazReg {
   @SuppressWarnings({"rawtypes", "unchecked"})
   private static <T> Registry<T> builtinRegistry(ResourceKey<? extends Registry<T>> registryKey) {
     Registry root = BuiltInRegistries.REGISTRY;
-    Holder.Reference<?> registryHolder = (Holder.Reference<?>) root.get(registryKey).orElse(null);
-    if (registryHolder == null) {
-      throw new IllegalArgumentException("Unsupported registry " + registryKey + ". KhazReg only supports builtin/static registries.");
-    }
-    return (Registry<T>) registryHolder.value();
+    Optional<Holder.Reference<Registry<T>>> registryHolder = root.get(registryKey);
+    return registryHolder.orElseThrow(() -> new IllegalArgumentException("Unsupported registry '" + registryKey + "'. KhazReg only supports builtin/static registries.")).value();
   }
 
   private static <T> Supplier<T> memoize(Supplier<T> supplier) {
