@@ -1,5 +1,6 @@
 package com.khazoda.core.keybind;
 
+import com.khazoda.core.Constants;
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
@@ -113,7 +114,7 @@ public final class KhazKeybind {
 
     private Builder(Identifier id) {
       this.id = Objects.requireNonNull(id, "id");
-      this.category = Identifier.fromNamespaceAndPath(id.getNamespace(), "main");
+      this.category = Constants.ID(id.getNamespace(), "main");
     }
 
     public Builder category(Identifier category) {

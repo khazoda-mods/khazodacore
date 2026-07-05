@@ -2,7 +2,7 @@ package com.khazoda.core;
 
 import net.neoforged.fml.common.Mod;
 
-@Mod("khazodacore")
+@Mod(Constants.MOD_ID)
 public final class KhazodaCoreNeoForge {
   public KhazodaCoreNeoForge() {
   }

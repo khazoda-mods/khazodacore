@@ -1,13 +1,14 @@
 package com.khazoda.core.config;
 
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
+import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.loading.FMLLoader;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
-import net.minecraft.resources.Identifier;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -43,7 +44,7 @@ public final class KhazConfigSyncNeoForge {
   }
 
   private static void registerClientDisconnectReloadListener() {
-    if (!clientGameListenersRegistered && FMLLoader.getCurrent().getDist().name().equals("CLIENT")) {
+    if (!clientGameListenersRegistered && FMLLoader.getCurrent().getDist() == Dist.CLIENT) {
       clientGameListenersRegistered = true;
       KhazConfigSyncClientNeoForge.registerDisconnectReloadListener();
     }

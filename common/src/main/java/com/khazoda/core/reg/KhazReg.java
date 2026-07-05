@@ -1,5 +1,6 @@
 package com.khazoda.core.reg;
 
+import com.khazoda.core.Constants;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -57,10 +58,6 @@ public final class KhazReg {
     };
   }
 
-  private Identifier ID(String path) {
-    return Identifier.fromNamespaceAndPath(modId, path);
-  }
-
   /**
    * ==========[ Common Registration Helpers ]==========
    * Registration methods to call from MainRegistry.
@@ -78,19 +75,19 @@ public final class KhazReg {
 
   /* Example: reg.item("tin_ingot") */
   public Entry<Item> item(String name) {
-    ResourceKey<Item> key = ResourceKey.create(Registries.ITEM, ID(name));
+    ResourceKey<Item> key = ResourceKey.create(Registries.ITEM, Constants.ID(modId, name));
     return register(Registries.ITEM, name, () -> new Item(new Item.Properties().setId(key)));
   }
 
   /* Example: reg.item("sickle", Sickle::new) */
   public <T extends Item> Entry<T> item(String name, Function<Item.Properties, T> factory) {
-    ResourceKey<Item> key = ResourceKey.create(Registries.ITEM, ID(name));
+    ResourceKey<Item> key = ResourceKey.create(Registries.ITEM, Constants.ID(modId, name));
     return register(Registries.ITEM, name, () -> factory.apply(new Item.Properties().setId(key)));
   }
 
   /* Example: reg.item("heavy_tin_ingot", (key, props) -> new Item(props.stacksTo(16))) */
   public <T extends Item> Entry<T> item(String name, ItemFactory<T> factory) {
-    ResourceKey<Item> key = ResourceKey.create(Registries.ITEM, ID(name));
+    ResourceKey<Item> key = ResourceKey.create(Registries.ITEM, Constants.ID(modId, name));
     return register(Registries.ITEM, name, () -> factory.create(key, new Item.Properties().setId(key)));
   }
 
@@ -151,37 +148,37 @@ public final class KhazReg {
 
   /* Example: reg.block("tin_block") */
   public Entry<Block> block(String name) {
-    ResourceKey<Block> key = ResourceKey.create(Registries.BLOCK, ID(name));
+    ResourceKey<Block> key = ResourceKey.create(Registries.BLOCK, Constants.ID(modId, name));
     return register(Registries.BLOCK, name, () -> new Block(BlockBehaviour.Properties.of().setId(key)));
   }
 
   /* Example: reg.block("strong_tin_block", (key, props) -> new Block(props.strength(5.0F))) */
   public <T extends Block> Entry<T> block(String name, BlockFactory<T> factory) {
-    ResourceKey<Block> key = ResourceKey.create(Registries.BLOCK, ID(name));
+    ResourceKey<Block> key = ResourceKey.create(Registries.BLOCK, Constants.ID(modId, name));
     return register(Registries.BLOCK, name, () -> factory.create(key, BlockBehaviour.Properties.of().setId(key)));
   }
 
   /* Example: reg.copyBlock("cut_tin", TIN_BLOCK) */
   public Entry<Block> copyBlock(String name, Supplier<? extends Block> source) {
-    ResourceKey<Block> key = ResourceKey.create(Registries.BLOCK, ID(name));
+    ResourceKey<Block> key = ResourceKey.create(Registries.BLOCK, Constants.ID(modId, name));
     return register(Registries.BLOCK, name, () -> new Block(BlockBehaviour.Properties.ofFullCopy(source.get()).setId(key)));
   }
 
   /* Example: reg.copyBlock("tin_stairs", TIN_BLOCK, (key, props) -> new StairBlock(TIN_BLOCK.get().defaultBlockState(), props)) */
   public <T extends Block> Entry<T> copyBlock(String name, Supplier<? extends Block> source, BlockFactory<T> factory) {
-    ResourceKey<Block> key = ResourceKey.create(Registries.BLOCK, ID(name));
+    ResourceKey<Block> key = ResourceKey.create(Registries.BLOCK, Constants.ID(modId, name));
     return register(Registries.BLOCK, name, () -> factory.create(key, BlockBehaviour.Properties.ofFullCopy(source.get()).setId(key)));
   }
 
   /* Example: reg.blockItem("tin_block", TIN_BLOCK) */
   public Entry<BlockItem> blockItem(String name, Supplier<? extends Block> block) {
-    ResourceKey<Item> key = ResourceKey.create(Registries.ITEM, ID(name));
+    ResourceKey<Item> key = ResourceKey.create(Registries.ITEM, Constants.ID(modId, name));
     return register(Registries.ITEM, name, () -> new BlockItem(block.get(), new Item.Properties().useBlockDescriptionPrefix().setId(key)));
   }
 
   /* Example: reg.blockItem("special_block", SPECIAL_BLOCK, (block, props) -> new BlockItem(block, props.stacksTo(1))) */
   public <B extends Block, I extends Item> Entry<I> blockItem(String name, Supplier<? extends B> block, BlockItemFactory<B, I> factory) {
-    ResourceKey<Item> key = ResourceKey.create(Registries.ITEM, ID(name));
+    ResourceKey<Item> key = ResourceKey.create(Registries.ITEM, Constants.ID(modId, name));
     return register(Registries.ITEM, name, () -> factory.create(block.get(), new Item.Properties().useBlockDescriptionPrefix().setId(key)));
   }
 
@@ -199,7 +196,7 @@ public final class KhazReg {
 
   /* Example: reg.sound("sword_clang") */
   public Entry<SoundEvent> sound(String name) {
-    return register(Registries.SOUND_EVENT, name, () -> SoundEvent.createVariableRangeEvent(ID(name)));
+    return register(Registries.SOUND_EVENT, name, () -> SoundEvent.createVariableRangeEvent(Constants.ID(modId, name)));
   }
 
   /* Example: reg.tab("metals", () -> new ItemStack(TIN_NUGGET.get())) */
@@ -386,7 +383,7 @@ public final class KhazReg {
     }
 
     private <T2 extends T> Entry<T2> register(String name, Function<ResourceKey<T2>, T2> factory) {
-      Identifier id = ID(name);
+      Identifier id = Constants.ID(modId, name);
       if (frozen) {
         throw new IllegalStateException("Can't register " + id + " after registration has started. Load registry classes from MainRegistry.init() first.");
       }
