@@ -1,24 +1,40 @@
 {
-    "schemaVersion": 1,
-    "id": "${mod_id}",
-    "version": "${version}",
-    "name": "${mod_name}",
-    "description": "${description}",
-    "authors": [
-        "${mod_author}"
-    ],
-    "contact": {
-        "homepage": "${homepage_url}",
-        "sources": "${sources_url}",
-        "issues": "${issues_url}"
+  "schemaVersion": 1,
+  "id": "${mod_id}",
+  "version": "${version}",
+  "name": "${mod_name}",
+  "description": "${description}",
+  "icon": "assets/${mod_id}/icon.png",
+  "authors": [
+    "${mod_author}"
+  ],
+  "contact": {
+    "homepage": "${mod_homepage}",
+    "sources": "${mod_sources}",
+    "issues": "${mod_issues}"
+  },
+  "license": "${license}",
+  "environment": "*",
+  "entrypoints": {
+    "modmenu": [
+      "com.khazoda.core.config.KhazConfigModMenuApi"
+    ]
+  },
+  "depends": {
+    "fabricloader": ">=${fabric_loader_version}",
+    "fabric-api": "*",
+    "minecraft": "~${minecraft_version}",
+    "java": ">=${java_version}"
+  },
+  "custom": {
+    "modmenu": {
+      "links": {
+        "modmenu.discord": "https://discord.com/invite/vEZUkSxwR9"
+      }
     },
-    "license": "${license}",
-    "icon": "${mod_icon}",
-    "environment": "*",
-    "depends": {
-        "fabricloader": ">=${fabric_loader_version}",
-        "fabric-api": "*",
-        "minecraft": "~${minecraft_version}",
-        "java": ">=${java_version}"
+    "catalogue": {
+      "banner": "assets/${mod_id}/banner.png",
+      "background": "assets/${mod_id}/background.png"
     }
+  }
 }
