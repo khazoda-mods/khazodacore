@@ -1,7 +1,6 @@
 modLoader = "javafml"
 loaderVersion = "${neoforge_loader_version_range}"
 license = "${license}"
-issueTrackerURL = "${mod_issues}"
 
 [[mods]]
 modId = "${mod_id}"
@@ -12,6 +11,7 @@ displayName = "${mod_name}"
 displayURL = "${mod_homepage}"
 authors = "${mod_author}"
 description = '''${description}'''
+issueTrackerURL = "${mod_issues}"
 
 [[dependencies.${mod_id}]]
 modId = "neoforge"
