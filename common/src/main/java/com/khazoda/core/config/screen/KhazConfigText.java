@@ -1,6 +1,7 @@
 package com.khazoda.core.config.screen;
 
 import com.khazoda.core.config.KhazConfig;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
 import org.jspecify.annotations.Nullable;
@@ -18,6 +19,16 @@ final class KhazConfigText {
   static @Nullable Component tooltip(KhazConfig config, KhazConfig.Entry<?> entry) {
     String key = labelKey(config, entry) + ".tooltip";
     return entry.comment().isBlank() && !I18n.exists(key) ? null : Component.translatableWithFallback(key, entry.comment());
+  }
+
+  static @Nullable Component tooltip(KhazConfig config, KhazConfig.Entry<?> entry, boolean editable) {
+    Component tooltip = tooltip(config, entry);
+    if (editable) return tooltip;
+    return Component.literal("- Controlled by Server -").withStyle(ChatFormatting.YELLOW);
+  }
+
+  static Component resetTooltip() {
+    return Component.translatable("controls.reset");
   }
 
   static Component enumValueLabel(KhazConfig config, KhazConfig.Entry<?> entry, Enum<?> value) {

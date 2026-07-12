@@ -32,7 +32,7 @@ final class KhazConfigControls {
 
   private static KhazConfigControl booleanControl(KhazConfig config, KhazConfig.Entry<Boolean> entry, boolean value, Component label, int width, boolean editable) {
     CycleButton<Boolean> button = CycleButton.onOffBuilder(value).displayOnlyValue().create(0, 0, width, 20, label);
-    setCommonWidgetState(button, KhazConfigText.tooltip(config, entry), editable);
+    setCommonWidgetState(button, KhazConfigText.tooltip(config, entry, editable), editable);
     return new CycleControl<>(button, entry::defaultValue, option -> config.setLocal(entry, option));
   }
 
@@ -42,7 +42,7 @@ final class KhazConfigControls {
     E defaultValue = enumEntry.defaultValue();
     E value = editable ? config.getLocal(enumEntry) : config.get(enumEntry);
     CycleButton<E> button = CycleButton.builder(option -> KhazConfigText.enumValueLabel(config, entry, option), value).withValues(defaultValue.getDeclaringClass().getEnumConstants()).displayOnlyValue().create(0, 0, width, 20, label);
-    setCommonWidgetState(button, KhazConfigText.tooltip(config, entry), editable);
+    setCommonWidgetState(button, KhazConfigText.tooltip(config, entry, editable), editable);
     return new CycleControl<>(button, enumEntry::defaultValue, option -> config.setLocal(enumEntry, option));
   }
 
@@ -53,7 +53,7 @@ final class KhazConfigControls {
     editBox.setValue(entry.adapter().format(value));
     editBox.setEditable(editable);
     editBox.active = editable;
-    setTooltip(editBox, KhazConfigText.tooltip(config, entry));
+    setTooltip(editBox, KhazConfigText.tooltip(config, entry, editable));
     editBox.setResponder(control::updateValue);
     control.updateValue(editBox.getValue());
     return control;

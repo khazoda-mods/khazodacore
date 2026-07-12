@@ -7,17 +7,11 @@ import net.minecraft.resources.Identifier;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
+import net.neoforged.neoforge.client.settings.KeyModifier;
 import net.neoforged.neoforge.common.NeoForge;
 import org.lwjgl.glfw.GLFW;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.function.BooleanSupplier;
 
 /**
@@ -95,15 +89,16 @@ public final class KhazKeybindNeoForge {
   }
 
   private static BooleanSupplier boundInputHeldInUiSupplier(KeyMapping keyMapping) {
-    return () -> keyMapping.isDown() || UiKeybindInput.isBoundInputHeld(
-        currentKey(keyMapping),
+    return () -> keyModifierActive(keyMapping) && UiKeybindInput.isBoundInputHeld(
+        keyMapping.getKey(),
         keyCode -> InputConstants.isKeyDown(Minecraft.getInstance().getWindow(), keyCode),
         mouseButton -> GLFW.glfwGetMouseButton(Minecraft.getInstance().getWindow().handle(), mouseButton) == InputConstants.PRESS
     );
   }
 
-  private static InputConstants.Key currentKey(KeyMapping keyMapping) {
-    return InputConstants.getKey(keyMapping.saveString());
+  private static boolean keyModifierActive(KeyMapping keyMapping) {
+    KeyModifier modifier = keyMapping.getKeyModifier();
+    return modifier == KeyModifier.NONE || modifier.isActive(keyMapping.getKeyConflictContext());
   }
 
   private static void registerClientTickListenerIfNeeded(Collection<KhazKeybind> keybinds) {
