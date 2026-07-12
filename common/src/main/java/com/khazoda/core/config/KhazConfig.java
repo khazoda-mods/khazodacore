@@ -1,5 +1,6 @@
 package com.khazoda.core.config;
 
+import com.khazoda.core.config.screen.KhazConfigScreens;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,7 +35,9 @@ public final class KhazConfig {
   }
 
   public static KhazConfig of(String modName, String modId, Path configDirectory, Entry<?>... entries) {
-    return new KhazConfig(modName, modId, configDirectory, List.of(entries));
+    KhazConfig config = new KhazConfig(modName, modId, configDirectory, List.of(entries));
+    KhazConfigScreens.register(config);
+    return config;
   }
 
   public static Entry<Boolean> bool(String key, boolean defaultValue, String comment) {
@@ -51,6 +54,10 @@ public final class KhazConfig {
 
   public static Entry<String> string(String key, String defaultValue, String comment) {
     return KhazConfigHelpers.createStringEntry(key, defaultValue, comment);
+  }
+
+  public static <E extends Enum<E>> Entry<E> enumeration(String key, E defaultValue, String comment) {
+    return KhazConfigHelpers.createEnumEntry(key, defaultValue, comment);
   }
 
   public synchronized void load() {
@@ -82,16 +89,52 @@ public final class KhazConfig {
     }
   }
 
-  // Re-loads the config file into memory.
   public synchronized void reload() {
     loaded = false;
     load();
   }
 
+  public String modName() {
+    return modName;
+  }
+
+  public String modId() {
+    return modId;
+  }
+
+  public List<Entry<?>> entries() {
+    return entries;
+  }
+
+  public synchronized <T> T getLocal(Entry<T> entry) {
+    requireKnownEntry(entry);
+    load();
+    @SuppressWarnings("unchecked") T value = (T) values.getOrDefault(entry, entry.defaultValue());
+    return value;
+  }
+
   public synchronized <T> T get(Entry<T> entry) {
+    requireKnownEntry(entry);
     load();
     @SuppressWarnings("unchecked") T value = (T) serverSyncedValues.getOrDefault(entry, values.getOrDefault(entry, entry.defaultValue()));
     return value;
+  }
+
+  public synchronized boolean hasServerSyncedValue(Entry<?> entry) {
+    requireKnownEntry(entry);
+    load();
+    return serverSyncedValues.containsKey(entry);
+  }
+
+  public synchronized <T> void setLocal(Entry<T> entry, T value) {
+    requireKnownEntry(entry);
+    load();
+    values.put(entry, entry.adapter().normalize(value, entry.defaultValue()));
+  }
+
+  public synchronized void save() {
+    load();
+    write();
   }
 
   public synchronized Map<String, String> createServerSyncSnapshot() {
@@ -149,10 +192,31 @@ public final class KhazConfig {
     return builder.toString();
   }
 
+  private void requireKnownEntry(Entry<?> entry) {
+    Objects.requireNonNull(entry, "entry");
+    for (Entry<?> knownEntry : entries) {
+      if (knownEntry == entry) {
+        return;
+      }
+    }
+    throw new IllegalArgumentException("Config entry '" + entry.key() + "' is not registered to " + modId);
+  }
+
   public interface ValueAdapter<T> {
-    T parse(String raw, T fallback);
+    /**
+     * Empty means the raw value is not valid for this entry.
+     */
+    Optional<T> parse(String raw);
+
+    default T parse(String raw, T fallback) {
+      return parse(raw).orElse(fallback);
+    }
 
     String format(T value);
+
+    default T normalize(T value, T fallback) {
+      return parse(format(value), fallback);
+    }
   }
 
   public record Entry<T>(String key, T defaultValue, String comment, ValueAdapter<T> adapter, boolean serverSynced) {
@@ -168,7 +232,7 @@ public final class KhazConfig {
     }
 
     /**
-     * Use this for client-only settings that should ignore server sync.
+     * Client-side options that should ignore server sync.
      */
     public Entry<T> localOnly() {
       return new Entry<>(key, defaultValue, comment, adapter, false);

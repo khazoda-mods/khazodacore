@@ -4,11 +4,7 @@ import com.khazoda.core.config.KhazConfig.Entry;
 import com.khazoda.core.config.KhazConfig.ValueAdapter;
 import org.jspecify.annotations.Nullable;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
-import java.util.function.BiFunction;
+import java.util.*;
 import java.util.function.Function;
 
 final class KhazConfigHelpers {
@@ -16,65 +12,61 @@ final class KhazConfigHelpers {
   }
 
   static Entry<Boolean> createBooleanEntry(String key, boolean defaultValue, String comment) {
-    return createEntry(
-        key,
-        defaultValue,
-        comment,
-        valueAdapter((raw, fallback) -> {
-          if ("true".equalsIgnoreCase(raw)) return true;
-          if ("false".equalsIgnoreCase(raw)) return false;
-          return fallback;
-        }, value -> Boolean.toString(value))
-    );
+    return createEntry(key, defaultValue, comment, valueAdapter(raw -> {
+      if ("true".equalsIgnoreCase(raw)) return Optional.of(true);
+      if ("false".equalsIgnoreCase(raw)) return Optional.of(false);
+      return Optional.empty();
+    }, value -> Boolean.toString(value)));
   }
 
   static Entry<Integer> createIntegerEntry(String key, int defaultValue, int min, int max, String comment) {
-    return createEntry(
-        key,
-        defaultValue,
-        commentAppendRange(comment, min, max),
-        valueAdapter((raw, fallback) -> {
-          try {
-            return clamp(Integer.parseInt(raw), min, max);
-          } catch (NumberFormatException ignored) {
-            return fallback;
-          }
-        }, value -> Integer.toString(clamp(value, min, max)))
-    );
+    return createEntry(key, defaultValue, commentAppendRange(comment, min, max), valueAdapter(raw -> {
+      try {
+        int parsed = Integer.parseInt(raw);
+        return parsed < min || parsed > max ? Optional.empty() : Optional.of(parsed);
+      } catch (NumberFormatException ignored) {
+        return Optional.empty();
+      }
+    }, value -> Integer.toString(clamp(value, min, max))));
   }
 
   static Entry<Double> createDecimalEntry(String key, double defaultValue, double min, double max, String comment) {
-    return createEntry(
-        key,
-        defaultValue,
-        commentAppendRange(comment, min, max),
-        valueAdapter((raw, fallback) -> {
-          try {
-            return clamp(Double.parseDouble(raw), min, max);
-          } catch (NumberFormatException ignored) {
-            return fallback;
-          }
-        }, value -> Double.toString(clamp(value, min, max)))
-    );
+    return createEntry(key, defaultValue, commentAppendRange(comment, min, max), valueAdapter(raw -> {
+      try {
+        double parsed = Double.parseDouble(raw);
+        return !Double.isFinite(parsed) || parsed < min || parsed > max ? Optional.empty() : Optional.of(parsed);
+      } catch (NumberFormatException ignored) {
+        return Optional.empty();
+      }
+    }, value -> Double.toString(clamp(value, min, max))));
   }
 
   static Entry<String> createStringEntry(String key, String defaultValue, String comment) {
-    return createEntry(
-        key,
-        defaultValue,
-        comment,
-        valueAdapter((raw, fallback) -> raw, value -> value)
-    );
+    return createEntry(key, defaultValue, comment, valueAdapter(Optional::of, value -> value));
+  }
+
+  static <E extends Enum<E>> Entry<E> createEnumEntry(String key, E defaultValue, String comment) {
+    Class<E> enumClass = defaultValue.getDeclaringClass();
+    return createEntry(key, defaultValue, comment, valueAdapter(raw -> parseEnum(enumClass, raw), value -> value.name().toLowerCase(Locale.ROOT)));
   }
 
   private static <T> Entry<T> createEntry(String key, T defaultValue, String comment, ValueAdapter<T> adapter) {
-    T normalizedDefaultValue = adapter.parse(adapter.format(defaultValue), defaultValue);
+    T normalizedDefaultValue = adapter.normalize(defaultValue, defaultValue);
     String fullComment = commentAppendDefaultValue(comment, adapter.format(normalizedDefaultValue));
     return new Entry<>(key, normalizedDefaultValue, fullComment, adapter);
   }
 
-  private static <T> ValueAdapter<T> valueAdapter(BiFunction<String, T, T> parser, Function<T, String> formatter) {
+  private static <T> ValueAdapter<T> valueAdapter(Function<String, Optional<T>> parser, Function<T, String> formatter) {
     return new FunctionalValueAdapter<>(parser, formatter);
+  }
+
+  private static <E extends Enum<E>> Optional<E> parseEnum(Class<E> enumClass, String raw) {
+    for (E value : enumClass.getEnumConstants()) {
+      if (value.name().equalsIgnoreCase(raw)) {
+        return Optional.of(value);
+      }
+    }
+    return Optional.empty();
   }
 
   private static String commentAppendRange(String comment, Number min, Number max) {
@@ -130,13 +122,11 @@ final class KhazConfigHelpers {
     return entry.adapter().format(typedValue);
   }
 
-  private record FunctionalValueAdapter<T>(
-      BiFunction<String, T, T> parser,
-      Function<T, String> formatter
-  ) implements ValueAdapter<T> {
+  private record FunctionalValueAdapter<T>(Function<String, Optional<T>> parser,
+                                           Function<T, String> formatter) implements ValueAdapter<T> {
     @Override
-    public T parse(String raw, T fallback) {
-      return parser.apply(raw, fallback);
+    public Optional<T> parse(String raw) {
+      return parser.apply(raw);
     }
 
     @Override

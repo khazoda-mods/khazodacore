@@ -1,8 +1,10 @@
 package com.khazoda.core.config;
 
+import net.fabricmc.api.EnvType;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.resources.Identifier;
 
 import java.util.LinkedHashMap;
@@ -21,6 +23,7 @@ public final class KhazConfigSyncFabric {
   public static void registerServerConfigSync(KhazConfig config, KhazConfigSync sync) {
     registerSyncRegistration(config, sync);
     registerClientboundPayloadType(sync);
+    registerClientSyncReceiver(config, sync);
     registerServerJoinSyncListener();
   }
 
@@ -49,6 +52,18 @@ public final class KhazConfigSyncFabric {
   public static void registerClientboundPayloadType(KhazConfigSync sync) {
     if (REGISTERED_PAYLOAD_TYPES.add(sync.payloadId())) {
       PayloadTypeRegistry.clientboundPlay().register(sync.type(), sync.codec());
+    }
+  }
+
+  private static void registerClientSyncReceiver(KhazConfig config, KhazConfigSync sync) {
+    if (FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT) {
+      KhazConfigSyncClientFabric.register(config, sync);
+    }
+  }
+
+  static void clearServerSyncedValuesAndReload() {
+    for (SyncRegistration registration : SYNC_REGISTRATIONS.values()) {
+      registration.config().clearServerSyncedValuesAndReload();
     }
   }
 
