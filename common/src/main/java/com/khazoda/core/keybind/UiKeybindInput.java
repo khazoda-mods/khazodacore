@@ -17,8 +17,9 @@ final class UiKeybindInput {
       return false;
     }
     return switch (key.getType()) {
-      case KEYBOARD -> keyDown.test(key.getValue());
+      case KEYSYM -> keyDown.test(key.getValue());
       case MOUSE -> mouseDown.test(key.getValue());
+      case SCANCODE -> false;
     };
   }
 }
