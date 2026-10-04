@@ -71,6 +71,6 @@ public final class KhazConfigScreen extends Screen {
   }
 
   private void closeToParent() {
-    Minecraft.getInstance().setScreenAndShow(parent);
+    Minecraft.getInstance().gui.setScreen(parent);
   }
 }
