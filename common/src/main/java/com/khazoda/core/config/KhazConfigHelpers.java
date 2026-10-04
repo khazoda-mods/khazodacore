@@ -102,10 +102,12 @@ final class KhazConfigHelpers {
     }
   }
 
+  @SuppressWarnings("MathClampMigration")
   private static int clamp(int value, int min, int max) {
     return Math.max(min, Math.min(max, value));
   }
 
+  @SuppressWarnings("MathClampMigration")
   private static double clamp(double value, double min, double max) {
     return Math.max(min, Math.min(max, value));
   }

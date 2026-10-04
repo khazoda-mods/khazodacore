@@ -123,11 +123,11 @@ public final class KhazKeybind {
     }
 
     public Builder defaultKey(int keyCode) {
-      return defaultKey(InputConstants.Type.KEYSYM.getOrCreate(keyCode));
+      return defaultKey(InputConstants.Type.KEYBOARD.getOrCreate(keyCode));
     }
 
     public Builder defaultScanCode(int scanCode) {
-      return defaultKey(InputConstants.Type.SCANCODE.getOrCreate(scanCode));
+      return defaultKey(scanCode);
     }
 
     public Builder defaultMouse(int mouseButton) {

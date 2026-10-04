@@ -2,7 +2,7 @@ package com.khazoda.core.config.screen;
 
 import com.khazoda.core.config.KhazConfig;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.resources.language.I18n;
+import net.minecraft.locale.Language;
 import net.minecraft.network.chat.Component;
 import org.jspecify.annotations.Nullable;
 
@@ -18,7 +18,7 @@ final class KhazConfigText {
 
   static @Nullable Component tooltip(KhazConfig config, KhazConfig.Entry<?> entry) {
     String key = labelKey(config, entry) + ".tooltip";
-    return entry.comment().isBlank() && !I18n.exists(key) ? null : Component.translatableWithFallback(key, entry.comment());
+    return entry.comment().isBlank() && !Language.getInstance().has(key) ? null : Component.translatableWithFallback(key, entry.comment());
   }
 
   static @Nullable Component tooltip(KhazConfig config, KhazConfig.Entry<?> entry, boolean editable) {

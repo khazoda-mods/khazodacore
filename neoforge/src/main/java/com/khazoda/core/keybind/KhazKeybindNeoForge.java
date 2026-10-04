@@ -2,14 +2,13 @@ package com.khazoda.core.keybind;
 
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.KeyMapping;
-import net.minecraft.client.Minecraft;
 import net.minecraft.resources.Identifier;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
 import net.neoforged.neoforge.client.settings.KeyModifier;
 import net.neoforged.neoforge.common.NeoForge;
-import org.lwjgl.glfw.GLFW;
+import org.lwjgl.sdl.SDLMouse;
 
 import java.util.*;
 import java.util.function.BooleanSupplier;
@@ -91,8 +90,8 @@ public final class KhazKeybindNeoForge {
   private static BooleanSupplier boundInputHeldInUiSupplier(KeyMapping keyMapping) {
     return () -> keyModifierActive(keyMapping) && UiKeybindInput.isBoundInputHeld(
         keyMapping.getKey(),
-        keyCode -> InputConstants.isKeyDown(Minecraft.getInstance().getWindow(), keyCode),
-        mouseButton -> GLFW.glfwGetMouseButton(Minecraft.getInstance().getWindow().handle(), mouseButton) == InputConstants.PRESS
+        InputConstants::isKeyDown,
+        mouseButton -> (SDLMouse.SDL_GetMouseState(null, null) & (1 << (mouseButton - 1))) != 0
     );
   }
 

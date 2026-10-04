@@ -112,18 +112,18 @@ public final class KhazReg {
   }
 
   /* Example: reg.axe("bronze_axe", BronzeMaterial.TOOL, 6.0F, -3.1F) */
-  public Entry<AxeItem> axe(String name, ToolMaterial material, float attackDamage, float attackSpeed) {
-    return item(name, (key, props) -> new AxeItem(material, attackDamage, attackSpeed, props));
+  public Entry<Item> axe(String name, ToolMaterial material, float attackDamage, float attackSpeed) {
+    return item(name, (key, props) -> new Item(props.axe(material, attackDamage, attackSpeed)));
   }
 
   /* Example: reg.shovel("bronze_shovel", BronzeMaterial.TOOL, 1.5F, -3.0F) */
-  public Entry<ShovelItem> shovel(String name, ToolMaterial material, float attackDamage, float attackSpeed) {
-    return item(name, (key, props) -> new ShovelItem(material, attackDamage, attackSpeed, props));
+  public Entry<Item> shovel(String name, ToolMaterial material, float attackDamage, float attackSpeed) {
+    return item(name, (key, props) -> new Item(props.shovel(material, attackDamage, attackSpeed)));
   }
 
   /* Example: reg.hoe("bronze_hoe", BronzeMaterial.TOOL, -2.0F, 0.0F) */
-  public Entry<HoeItem> hoe(String name, ToolMaterial material, float attackDamage, float attackSpeed) {
-    return item(name, (key, props) -> new HoeItem(material, attackDamage, attackSpeed, props));
+  public Entry<Item> hoe(String name, ToolMaterial material, float attackDamage, float attackSpeed) {
+    return item(name, (key, props) -> new Item(props.hoe(material, attackDamage, attackSpeed)));
   }
 
   /* Example: reg.humanoidArmor("bronze_helmet", BronzeMaterial.ARMOR, ArmorType.HELMET) */

@@ -4,9 +4,8 @@ import com.mojang.blaze3d.platform.InputConstants;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keymapping.v1.KeyMappingHelper;
 import net.minecraft.client.KeyMapping;
-import net.minecraft.client.Minecraft;
 import net.minecraft.resources.Identifier;
-import org.lwjgl.glfw.GLFW;
+import org.lwjgl.sdl.SDLMouse;
 
 import java.util.Collection;
 import java.util.LinkedHashMap;
@@ -62,8 +61,8 @@ public final class KhazKeybindFabric {
   private static BooleanSupplier boundInputHeldInUiSupplier(KeyMapping keyMapping) {
     return () -> keyMapping.isDown() || UiKeybindInput.isBoundInputHeld(
         currentKey(keyMapping),
-        keyCode -> InputConstants.isKeyDown(Minecraft.getInstance().getWindow(), keyCode),
-        mouseButton -> GLFW.glfwGetMouseButton(Minecraft.getInstance().getWindow().handle(), mouseButton) == InputConstants.PRESS
+        InputConstants::isKeyDown,
+        mouseButton -> (SDLMouse.SDL_GetMouseState(null, null) & (1 << (mouseButton - 1))) != 0
     );
   }
 
